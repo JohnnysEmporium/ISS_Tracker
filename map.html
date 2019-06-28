@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Simple Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body data-root="${rootContext}">
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD50pDivIy-o8jRDPlBFppUf0vcWIYfXy0&callback=initMap"
+    async defer></script>
+    <script>
+      var map;
+      var markers = [];
+      var coords = [];
+
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          mapTypeId: 'satellite',
+          zoom: 8
+        });
+      };
+
+      function addISSMarker(lat, lng){
+        var lat_lng = new google.maps.LatLng(lat, lng);
+        var iconISS = {
+          url: 'https://static.thenounproject.com/png/956251-200.png',
+          scaledSize: new google.maps.Size(60,60),
+          anchor: new google.maps.Point(32, 32),
+        };
+        var marker = new google.maps.Marker({
+            position: lat_lng,
+            map: map,
+            icon: iconISS,
+        });
+
+        markers.push(marker)
+        coords.push({'lat': lat, 'lng': lng})
+
+        if(markers.length >= 2){
+            markers[markers.length - 2].setMap(null);
+            var line = new google.maps.Polyline({
+                path: coords,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 2,
+            });
+            line.setMap(map)
+            coords.shift();
+        };
+      };
+
+      function goTo(lat, lng){
+        var lat_lng = new google.maps.LatLng(lat, lng);
+        map.panTo(lat_lng)
+      };
+
+    </script>
+  </body>
+</html>
